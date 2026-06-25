@@ -150,17 +150,19 @@ document.addEventListener('DOMContentLoaded', () => {
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const name    = document.getElementById('contact-name')?.value.trim();
-      const email   = document.getElementById('contact-email')?.value.trim();
-      const interest = document.getElementById('contact-interest')?.value;
-      const message = document.getElementById('contact-message')?.value.trim();
+      const name            = document.getElementById('contact-name')?.value.trim();
+      const email           = document.getElementById('contact-email')?.value.trim();
+      const interest        = document.getElementById('contact-interest')?.value;
+      const investmentLever = document.getElementById('contact-lever')?.value;
+      const budget          = document.getElementById('contact-budget')?.value;
+      const message         = document.getElementById('contact-message')?.value.trim();
 
       if (!name || !email || !interest) {
         showStatus('error', 'Please fill in all required fields.');
         return;
       }
 
-      // Simulate submission
+      // Submit form
       const originalText = contactSubmitBtn.innerHTML;
       contactSubmitBtn.disabled = true;
       contactSubmitBtn.innerHTML = `
@@ -177,27 +179,33 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       try {
-        // Try actual API endpoint first
         const response = await fetch('/api/contact', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, interest, message })
+          body: JSON.stringify({ name, email, interest, investmentLever, budget, message })
         });
 
-        if (response.ok) {
-          handleSuccess(originalText);
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          handleSuccess(originalText, result.message);
         } else {
-          throw new Error('API Error');
+          showStatus('error', result.message || 'Unable to send email. Please try again.');
+          contactSubmitBtn.disabled = false;
+          contactSubmitBtn.innerHTML = originalText;
+          if (typeof lucide !== 'undefined') lucide.createIcons();
         }
-      } catch {
-        // Simulate success for demo
-        setTimeout(() => handleSuccess(originalText), 1500);
+      } catch (err) {
+        showStatus('error', 'Failed to send message. Please check your network connection.');
+        contactSubmitBtn.disabled = false;
+        contactSubmitBtn.innerHTML = originalText;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
       }
     });
   }
 
-  function handleSuccess(originalBtnText) {
-    showStatus('success', `✓ Thank you! We'll be in touch with you shortly to start building together.`);
+  function handleSuccess(originalBtnText, successMsg) {
+    showStatus('success', successMsg || `✓ Thank you! We'll be in touch with you shortly to start building together.`);
     contactForm.reset();
     contactSubmitBtn.disabled = false;
     contactSubmitBtn.innerHTML = originalBtnText;

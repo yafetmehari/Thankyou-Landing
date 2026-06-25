@@ -95,13 +95,14 @@ app.post('/api/contact', async (req, res) => {
   const contactSummary = `New inquiry from: ${name} <${email}>\nInterest: ${interest} | Budget: ${budget || 'Not specified'} | Investment Lever: ${investmentLever || '—'}\nMessage: ${message || '—'}`;
   console.log(`\n[CONTACT FORM] ${contactSummary}`);
 
-  const settings = readData().settings || { contactEmail: '' };
+  const data = readData();
+  const settings = data.settings || { contactEmail: '' };
   const recipient = EMAIL_TO || settings.contactEmail || data.admin.email || '';
 
   if (EMAIL_USER && EMAIL_PASS && recipient) {
     const mailOptions = {
       from: EMAIL_USER,
-      to: EMAIL_TO,
+      to: recipient,
       replyTo: email,
       subject: `New inquiry from ${name} — ${interest}`,
       text: contactSummary,
