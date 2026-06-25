@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>thank you brand | Admin Control Panel</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --color-cream: #F7EFE5;
+      --color-sand: #FFF7EB;
+      --color-border: rgba(34, 34, 34, 0.08);
+      --color-charcoal: #262626;
+      --color-charcoal-light: rgba(38, 38, 38, 0.75);
+      --color-error: #E03E3E;
+      --color-primary: #C9A84C;
+      --color-white: #FFFFFF;
+      --admin-bg: #F7EFE5;
+      --admin-surface: #FFFFFF;
+      --admin-card: #FCF7ED;
+      --admin-text: #000000;
+      --admin-muted: #4A4A4A;
+      --admin-border-dark: rgba(0, 0, 0, 0.12);
+    }
+
+    /* Unique Admin Styling Overrides */
+    .admin-body {
+      background-color: var(--admin-bg);
+      color: var(--admin-text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-body,
+    .admin-body input,
+    .admin-body select,
+    .admin-body textarea,
+    .admin-body button,
+    .admin-body label,
+    .admin-body .form-label,
+    .admin-body .admin-tab-details,
+    .admin-body .panel-header h3,
+    .admin-body .section-title,
+    .admin-body .section-description,
+    .admin-body .tab-name,
+    .admin-body .prod-title,
+    .admin-body .admin-tab-id,
+    .admin-body .logo {
+      color: var(--admin-text) !important;
+    }
+
+    .admin-body a {
+      color: var(--admin-text) !important;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      font-weight: 600;
+    }
+
+    .auth-overlay,
+    .auth-card,
+    .admin-panel,
+    .modal-box {
+      background-color: var(--admin-surface) !important;
+      color: var(--admin-text) !important;
+      border-color: var(--admin-border-dark) !important;
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.10);
+      border-radius: 24px;
+    }
+
+    .auth-overlay {
+      background-color: rgba(247, 239, 229, 0.98);
+    }
+
+    .form-input,
+    .canvas-textarea,
+    .form-input-wrapper input,
+    .form-input-wrapper select,
+    .form-input-wrapper textarea {
+      color: var(--admin-text);
+      background: #FFFFFF;
+      border: 1px solid var(--admin-border-dark);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-input:focus,
+    .form-input-wrapper select:focus,
+    .form-input-wrapper textarea:focus {
+      outline: none;
+      border-color: rgba(73, 99, 148, 0.25);
+      box-shadow: 0 0 0 4px rgba(201, 168, 76, 0.10);
+    }
+
+    .form-input-wrapper {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .admin-body .btn,
+    .admin-body .tab-action-btn {
+      color: var(--admin-text) !important;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+
+    .admin-body .btn:hover,
+    .admin-body .tab-action-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 38px rgba(15, 23, 42, 0.12);
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary) !important;
+      color: #000 !important;
+    }
+
+    .btn-secondary {
+      background-color: #E4C97A !important;
+      color: #000 !important;
+    }
+
+    /* Auth Gate Layout */
+    .auth-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: var(--color-cream);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-md);
+      transition: opacity 0.4s ease;
+    }
+
+    .auth-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .auth-card {
+      background-color: var(--color-sand);
+      padding: 3rem;
+      border-radius: 24px;
+      box-shadow: 0 35px 90px rgba(15, 23, 42, 0.08);
+      width: 100%;
+      max-width: 460px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .auth-card .logo {
+      margin-bottom: 2rem;
+      display: block;
+    }
+
+    .auth-title {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Admin Hub Page Elements */
+    .admin-header {
+      background-color: var(--color-sand);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 16px 36px rgba(15, 23, 42, 0.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .admin-header-container {
+      max-width: 1280px;
+      height: 80px;
+      margin: 0 auto;
+      padding: 0 var(--spacing-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .admin-nav-actions {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .admin-main {
+      flex-grow: 1;
+      max-width: 1280px;
+      width: 100%;
+      margin: 0 auto;
+      padding: var(--spacing-md);
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: var(--spacing-md);
+      align-items: flex-start;
+      margin-top: var(--spacing-md);
+    }
+
+    @media (max-width: 992px) {
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Card Panels */
+    .admin-panel {
+      background-color: var(--color-sand);
+      border-radius: 24px;
+      padding: var(--spacing-md);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--color-border);
+      padding-bottom: 0.75rem;
+    }
+
+    .panel-header h3 {
+      font-family: var(--font-sans);
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    /* Tabs configuration layout */
+    .admin-tabs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .admin-tab-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--color-cream);
+      padding: 0.9rem 1rem;
+      border-radius: 18px;
+      font-weight: 500;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.04);
+    }
+
+    .admin-tab-item:hover {
+      background-color: #ede7de;
+    }
+
+    .admin-tab-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .admin-tab-id {
+      font-size: 0.7rem;
+      color: var(--color-charcoal-light);
+      opacity: 0.7;
+    }
+
+    .tab-actions {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .tab-action-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-charcoal-light);
+      transition: var(--transition-fast);
+    }
+
+    .tab-action-btn:hover {
+      background-color: rgba(28, 29, 33, 0.08);
+      color: var(--color-charcoal);
+    }
+
+    .tab-action-btn.delete:hover {
+      background-color: rgba(230, 57, 70, 0.1);
+      color: var(--color-error);
+    }
+
+    /* Products list view */
+    .admin-product-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    .admin-product-table th, .admin-product-table td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .admin-product-table th {
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--color-charcoal-light);
+      opacity: 0.8;
+    }
+
+    .product-row-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .prod-thumb {
+      width: 50px;
+      height: 50px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      background-color: var(--color-cream);
+    }
+
+    .prod-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .prod-category-badge {
+      display: inline-block;
+      padding: 0.25rem 0.5rem;
+      background-color: var(--color-cream);
+      border-radius: 30px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .admin-product-table td .btn {
+      padding: 0.5rem 1rem;
+      font-size: 0.8rem;
+    }
+
+    /* Alerts */
+    .toast-notification {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: var(--color-charcoal);
+      color: var(--color-sand);
+      padding: 1rem 1.5rem;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .toast-notification.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast-notification.error {
+      background-color: var(--color-error);
+    }
+  </style>
+</head>
+<body class="admin-body">
+
+  <!-- Auth Gate Overlay -->
+  <div class="auth-overlay" id="auth-overlay">
+    <div class="auth-card">
+      <span class="logo">thank you<span>.</span></span>
+      <h2 class="auth-title">Admin Console</h2>
+      <form id="admin-login-form" class="modal-form">
+        <div class="form-grid" id="login-credentials-stage">
+          <div class="form-input-wrapper">
+            <input type="text" id="admin-username" class="form-input" placeholder=" " required autocomplete="username">
+            <label for="admin-username" class="form-label">Username or Gmail</label>
+          </div>
+          <div class="form-input-wrapper">
+            <input type="password" id="admin-password" class="form-input" placeholder=" " required autocomplete="current-password">
+            <label for="admin-password" class="form-label">Password</label>
+          </div>
+        </div>
+
+        <div id="login-2fa-stage" class="form-grid" style="display: none; margin-top: 1rem;">
+          <div class="form-input-wrapper" style="width: 100%;">
+            <input type="text" id="admin-2fa-code" class="form-input" placeholder=" " autocomplete="one-time-code">
+            <label for="admin-2fa-code" class="form-label">Google Authenticator code</label>
+          </div>
+        </div>
+
+        <div id="login-error-msg" style="color: var(--color-error); font-size: 0.85rem; margin-top: 0.5rem; text-align: left; display: none;"></div>
+        <div style="margin-top: 1rem; color: var(--color-charcoal); font-size: 0.95rem; text-align: left; line-height: 1.5; background: rgba(255,255,255,0.9); padding: 0.9rem 1rem; border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08);">
+          <strong>Admin login:</strong><br>
+          Sign in with your admin username or Gmail and password. If 2-step authentication is enabled, you will be asked for your authenticator code.
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">Access Dashboard</button>
+        <div style="margin-top: 1rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <a href="#" id="forgot-password-link" style="font-size: 0.9rem; color: var(--color-charcoal); text-decoration: none;">Forgot password? Send reset instructions to admin Gmail</a>
+          <button type="button" id="reset-login-btn" class="btn btn-secondary" style="font-size: 0.85rem; padding: 0.55rem 1rem;">Reset Login</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Main Admin Portal -->
+  <header class="admin-header">
+    <div class="admin-header-container">
+      <div class="logo">thank you<span>.</span> <span style="font-size: 0.95rem; font-weight: 500; font-family: var(--font-sans); color: var(--color-charcoal-light); margin-left: 0.5rem;">Admin</span></div>
+      <div class="admin-nav-actions">
+        <a href="index.html" class="btn btn-secondary btn-icon-text" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;">
+          <i data-lucide="external-link"></i> View Site
+        </a>
+        <button id="admin-logout-btn" class="btn btn-primary btn-icon-text" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;">
+          <i data-lucide="log-out"></i> Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="admin-main">
+    <div class="section-header">
+      <h2 class="section-title">Storefront Dashboard</h2>
+      <p class="section-description">Manage your collection categories (tabs) and catalog products. Updates persist to local storage files instantly.</p>
+    </div>
+
+    <div class="admin-grid">
+      <!-- Categories/Tabs Panel -->
+      <section class="admin-panel">
+        <div class="panel-header">
+          <h3>Collection Tabs</h3>
+          <button id="add-tab-btn" class="icon-btn" style="width: 32px; height: 32px;" title="Add new collection category">
+            <i data-lucide="plus"></i>
+          </button>
+        </div>
+        <div class="admin-tabs-list" id="admin-tabs-list">
+          <!-- Categories injected here -->
+        </div>
+      </section>
+
+      <!-- Products Management Panel -->
+      <section class="admin-panel" style="overflow-x: auto;">
+        <div class="panel-header">
+          <h3>Product Catalog</h3>
+          <button id="add-prod-btn" class="btn btn-primary btn-icon-text" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;">
+            <i data-lucide="plus"></i> Add Product
+          </button>
+        </div>
+        <table class="admin-product-table">
+          <thead>
+            <tr>
+              <th>Product Details</th>
+              <th>Category</th>
+              <th>Price</th>
+              <th style="text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-products-list">
+            <!-- Products injected here -->
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <div class="admin-panel" style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: var(--color-sand); border: 1px solid var(--color-border);">
+      <div class="panel-header">
+        <h3>Contact Form Email</h3>
+      </div>
+      <p style="margin-bottom: 1rem; color: var(--color-charcoal-light);">Set the address where landing page contact submissions should be sent.</p>
+      <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+        <div style="flex: 1; min-width: 260px;">
+          <label for="contact-email-input" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--color-charcoal);">Contact delivery email</label>
+          <input id="contact-email-input" type="email" class="form-input" placeholder="youremail@gmail.com" style="width:100%; padding: 0.9rem 1rem; border: 1px solid var(--color-border); background: var(--color-white); color: var(--color-charcoal); border-radius: var(--radius-sm);" />
+        </div>
+        <button id="save-contact-email-btn" class="btn btn-primary" style="padding: 0.9rem 1.5rem;">Save Email</button>
+      </div>
+      <p id="contact-email-help" style="margin-top: 0.75rem; color: var(--color-charcoal-light); font-size: 0.9rem;">This will be used only if your server email credentials are configured.</p>
+    </div>
+
+    <div class="admin-panel" style="margin-top: var(--spacing-md); padding: var(--spacing-md); background: var(--color-sand); border: 1px solid var(--color-border);">
+      <div class="panel-header">
+        <h3>Admin Account Settings</h3>
+      </div>
+      <p style="margin-bottom: 1rem; color: var(--color-charcoal-light);">Update the admin username, Gmail address, and password used to sign in.</p>
+      <div class="form-grid" style="grid-template-columns: 1fr; gap: 1rem;">
+        <div class="form-input-wrapper">
+          <input type="text" id="admin-username-input" class="form-input" placeholder=" " required>
+          <label for="admin-username-input" class="form-label">Admin username</label>
+        </div>
+        <div class="form-input-wrapper">
+          <input type="email" id="admin-email-input" class="form-input" placeholder=" " required>
+          <label for="admin-email-input" class="form-label">Admin Gmail address</label>
+        </div>
+        <div class="form-input-wrapper">
+          <input type="password" id="admin-password-input" class="form-input" placeholder=" ">
+          <label for="admin-password-input" class="form-label">New password</label>
+        </div>
+        <div class="form-input-wrapper">
+          <input type="password" id="admin-confirm-password-input" class="form-input" placeholder=" ">
+          <label for="admin-confirm-password-input" class="form-label">Confirm new password</label>
+        </div>
+      </div>
+      <button id="save-admin-account-btn" class="btn btn-primary" style="margin-top: 1rem; padding: 0.9rem 1.5rem;">Save Admin Account</button>
+      <div style="margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.85); border-radius: 0.85rem; border: 1px solid rgba(0,0,0,0.08);">
+        <p style="margin: 0 0 0.75rem; color: var(--color-charcoal-light); font-size: 0.95rem;">Google Authenticator 2-step authentication is optional. Enable it here to protect admin login with a TOTP code.</p>
+        <div style="display: grid; gap: 0.9rem;">
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: center;">
+            <span id="two-factor-status" style="font-weight: 600; color: var(--color-charcoal);">2FA is currently disabled.</span>
+            <button id="generate-2fa-btn" class="btn btn-secondary" style="padding: 0.6rem 1rem;">Generate QR Code</button>
+            <button id="disable-2fa-btn" class="btn btn-secondary" style="padding: 0.6rem 1rem; display: none;">Disable 2FA</button>
+          </div>
+          <div id="two-factor-setup-panel" style="display: none; gap: 1rem;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-start;">
+              <img id="two-factor-qr" src="" alt="Authenticator QR Code" style="max-width: 220px; border: 1px solid var(--color-border); border-radius: 0.75rem; background: var(--color-white);" />
+              <div style="flex: 1; min-width: 260px;">
+                <p style="margin: 0 0 0.5rem; font-weight: 600;">Scan this QR code in Google Authenticator.</p>
+              <p style="margin: 0 0 0.75rem; color: var(--color-charcoal-light);">You can scan the same code on two devices to share authentication access with another trusted user.</p>
+              <p id="two-factor-secret" style="word-break: break-all; color: var(--color-charcoal-light); background: rgba(255,255,255,0.9); padding: 0.75rem; border-radius: 0.75rem; border: 1px solid rgba(0,0,0,0.08);">Secret will appear here.</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+              <input type="text" id="two-factor-verify-code" class="form-input" placeholder="Enter authenticator code" style="flex: 1; min-width: 220px; padding: 0.9rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-sm);" />
+              <button id="verify-2fa-btn" type="button" class="btn btn-primary" style="padding: 0.9rem 1.25rem;">Verify & Enable</button>
+            </div>
+            <div id="two-factor-setup-msg" style="color: var(--color-charcoal); font-size: 0.9rem;"></div>
+          </div>
+        </div>
+      </div>
+      <p style="margin-top: 0.75rem; color: var(--color-charcoal-light); font-size: 0.9rem;">If you change your password, use the new password for the next login. Reset emails only work when SMTP is configured.</p>
+    </div>
+  </main>
+
+  <!-- Add/Edit Tab Modal -->
+  <div class="modal-overlay" id="tab-modal-overlay">
+    <div class="modal-box" style="max-width: 400px;">
+      <button class="modal-close icon-btn" id="tab-modal-close" aria-label="Close modal">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="modal-content">
+        <h3 id="tab-modal-title">Add Collection Tab</h3>
+        <form id="tab-form" class="modal-form">
+          <input type="hidden" id="tab-original-id">
+          <div class="form-grid">
+            <div class="form-input-wrapper">
+              <input type="text" id="tab-name-input" class="form-input" placeholder=" " required>
+              <label for="tab-name-input" class="form-label">Tab Name (e.g. Self Care)</label>
+            </div>
+            <div class="form-input-wrapper">
+              <input type="text" id="tab-id-input" class="form-input" placeholder=" " required pattern="[a-z0-9\-]+">
+              <label for="tab-id-input" class="form-label">Tab ID URL Slug (lowercase, a-z, e.g. self-care)</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">Save Tab</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Product Modal -->
+  <div class="modal-overlay" id="product-modal-overlay">
+    <div class="modal-box" style="max-width: 540px;">
+      <button class="modal-close icon-btn" id="product-modal-close" aria-label="Close modal">
+        <i data-lucide="x"></i>
+      </button>
+      <div class="modal-content">
+        <h3 id="product-modal-title">Add Product Details</h3>
+        <form id="product-form" class="modal-form">
+          <input type="hidden" id="product-id-input">
+          <div class="form-grid">
+            <div class="form-input-wrapper">
+              <input type="text" id="prod-name-input" class="form-input" placeholder=" " required>
+              <label for="prod-name-input" class="form-label">Product Title</label>
+            </div>
+
+            <div class="form-input-wrapper">
+              <select id="prod-category-select" class="form-input" style="appearance: none; background-image: url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E'); background-repeat: no-repeat; background-position: right 1.25rem center; background-size: 1rem;" required>
+                <!-- Dynamically populated -->
+              </select>
+              <label for="prod-category-select" class="form-label" style="top: 0; left: 0.75rem; transform: translateY(-50%) scale(0.8); background-color: var(--color-sand); padding: 0 0.5rem;">Category Tab</label>
+            </div>
+
+            <div class="form-input-wrapper">
+              <input type="number" id="prod-price-input" class="form-input" step="0.01" min="0" placeholder=" " required>
+              <label for="prod-price-input" class="form-label">Retail Price ($USD)</label>
+            </div>
+
+            <div class="form-input-wrapper">
+              <input type="text" id="prod-tag-input" class="form-input" placeholder=" ">
+              <label for="prod-tag-input" class="form-label">Tag Badge (e.g. New Drop, 100% Organic)</label>
+            </div>
+
+            <div class="form-input-wrapper">
+              <input type="text" id="prod-image-input" class="form-input" placeholder=" " value="assets/hero_lifestyle.png" required>
+              <label for="prod-image-input" class="form-label">Image Path (e.g. assets/organic_tee.png)</label>
+            </div>
+
+            <div class="form-input-wrapper">
+              <textarea id="prod-desc-input" class="canvas-textarea" style="height: 80px;" placeholder=" " required></textarea>
+              <label for="prod-desc-input" class="form-label" style="top: 0; left: 0.75rem; transform: translateY(-50%) scale(0.8); background-color: var(--color-sand); padding: 0 0.5rem;">Description Details</label>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1rem;">Save Catalog Product</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="admin-toast" class="toast-notification">
+    <i id="toast-icon" data-lucide="info"></i>
+    <span id="toast-message">Notification text</span>
+  </div>
+
+  <!-- Admin logic app -->
+  <script src="admin.js"></script>
+</body>
+</html>
