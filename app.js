@@ -313,6 +313,57 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { passive: true });
   }
 
+  // ============================================================
+  // 10. PORTFOLIO LIGHTBOX MODAL
+  // ============================================================
+  const lightbox = document.getElementById('portfolio-lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const lightboxCaption = document.getElementById('lightbox-caption');
+  const lightboxClose = document.getElementById('lightbox-close');
+
+  if (lightbox && lightboxImg && lightboxClose) {
+    const portfolioImages = document.querySelectorAll('.portfolio-double-preview img');
+
+    portfolioImages.forEach(img => {
+      img.style.cursor = 'zoom-in';
+
+      img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightboxImg.alt = img.alt;
+        if (lightboxCaption) {
+          lightboxCaption.textContent = img.alt || 'Portfolio screenshot';
+        }
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    const closeLightbox = () => {
+      lightbox.classList.remove('open');
+      lightbox.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      setTimeout(() => {
+        lightboxImg.src = '';
+        if (lightboxCaption) lightboxCaption.textContent = '';
+      }, 350);
+    };
+
+    lightboxClose.addEventListener('click', closeLightbox);
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        closeLightbox();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox.classList.contains('open')) {
+        closeLightbox();
+      }
+    });
+  }
+
   // Final icon init after all dynamic content
   setTimeout(() => {
     if (typeof lucide !== 'undefined') {
