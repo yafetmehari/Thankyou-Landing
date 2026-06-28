@@ -1,0 +1,6 @@
+node_modules/
+.env
+data.json
+.gemini/
+thankyoubrand-landing-page-.worktrees/
+thankyoubrand-landing-page-

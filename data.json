@@ -1,0 +1,60 @@
+{
+  "tabs": [
+    {
+      "id": "all",
+      "name": "All Items"
+    },
+    {
+      "id": "apparel",
+      "name": "Apparel"
+    },
+    {
+      "id": "home",
+      "name": "Home Goods"
+    },
+    {
+      "id": "stationery",
+      "name": "Stationery"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "title": "Organic Cotton Lounge Tee",
+      "category": "apparel",
+      "price": 42,
+      "image": "assets/organic_tee.png",
+      "tag": "Organic & Fairtrade",
+      "desc": "Ultra-soft, GOTS-certified organic cotton. Relaxed silhouette dyed using natural bio-pigments."
+    },
+    {
+      "id": 2,
+      "title": "Eco-Luxe Soy Candle",
+      "category": "home",
+      "price": 34,
+      "image": "assets/soy_candle.png",
+      "tag": "Hand-poured",
+      "desc": "Non-toxic soy wax with wooden wick. Infused with cedarwood, amber, and cardamon essential oils."
+    },
+    {
+      "id": 3,
+      "title": "Recycled Gratitude Journal",
+      "category": "stationery",
+      "price": 28,
+      "image": "assets/gratitude_journal.png",
+      "tag": "FSC Recycled",
+      "desc": "Lay-flat design with 160 pages of heavyweight paper. Includes guided appreciation prompts."
+    }
+  ],
+  "admin": {
+    "username": "admin",
+    "email": "admin@gmail.com",
+    "password": "thankyoubrand",
+    "twoFactorEnabled": false,
+    "twoFactorSecret": null,
+    "twoFactorTempSecret": null
+  },
+  "settings": {
+    "contactEmail": "thankyoubrandbiz@gmail.com"
+  }
+}
